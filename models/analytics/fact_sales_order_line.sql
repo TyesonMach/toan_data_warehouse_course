@@ -7,9 +7,9 @@ Yêu cầu #0104b:
 
 
 SELECT 
-  order_line_id AS sales_order_line_id
-  , stock_item_id AS product_id
-  , quantity
-  , unit_price
-  , quantity * unit_price AS gross_amount
+  cast(order_line_id as int) AS sales_order_line_id
+  , cast(stock_item_id as int) AS product_id
+  , cast(quantity as numeric) as quantity
+  , cast(unit_price as numeric) as unit_price
+  , cast(quantity * unit_price as numeric) AS gross_amount
 FROM `duckdata-320210.wide_world_importers.sales__order_lines`
