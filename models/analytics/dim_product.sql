@@ -34,7 +34,7 @@ WITH dim_product__source AS (
   case
   when is_chiller_stock is true then 'Chiller Stock'
   when is_chiller_stock is false then 'Not Chiller Stock'
-  else 'Unknown' end
+  else 'Unknown' end as is_chiller_stock
   from dim_product__cast_type
 )
 
