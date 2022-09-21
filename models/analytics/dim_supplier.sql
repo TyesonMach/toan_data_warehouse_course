@@ -9,5 +9,18 @@ Yêu cầu #0107a:
 | supplier_name | supplier_name |
 
 #}
+with dim_supplier__source as(
+    select
+    supplier_id,
+    supplier_name
+  from `duckdata-320210.wide_world_importers.purchasing__suppliers`
+)
+, dim_supplier__cast_type as(
+  select
+    cast(supplier_id as int) as supplier_id,
+    cast(supplier_name as string) as supplier_name
+  from dim_supplier__source
+)
 
-
+select *
+from dim_supplier__cast_type

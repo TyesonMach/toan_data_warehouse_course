@@ -42,7 +42,11 @@ WITH dim_product__source AS (
 )
 
 SELECT 
-  product_id
-  , product_name
-  , brand_name
-FROM dim_product__cast_type
+  dim_product_line.product_id
+  , dim_product_line.product_name
+  , dim_product_line.brand_name
+  , dim_supplier_line.supplier_id
+  , dim_supplier_line.supplier_name
+FROM dim_product__cast_type as dim_product_line
+left join {{ref('dim_supplier')}} as dim_supplier_line
+on dim_product_line.supplier_id = dim_supplier_line.supplier_id
