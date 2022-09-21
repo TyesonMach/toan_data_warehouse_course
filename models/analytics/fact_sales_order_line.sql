@@ -1,12 +1,12 @@
 {#
-  add a product_id atribute for fact table
+    add cast function to fact table while retriving data from source
 #}
 
 SELECT 
-  order_line_id AS sales_order_line_id
-  , quantity
-  , unit_price
-  , quantity * unit_price AS gross_amount,
-  stock_item_id as product_id
+  cast(order_line_id as int) AS sales_order_line_id
+  , cast(stock_item_id as int) AS product_id
+  , cast(quantity as numeric) as quantity
+  , cast(unit_price as numeric) as unit_price
+  , cast(quantity * unit_price as numeric) AS gross_amount
 FROM `duckdata-320210.wide_world_importers.sales__order_lines`
 

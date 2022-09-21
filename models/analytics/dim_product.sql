@@ -1,9 +1,9 @@
 {#
-  create a product dim table from table "Warehouse__stock_items"
+  add cast function to dim table while retriving data from source
 #}
 
 SELECT 
-  stock_item_id as product_id,
-  stock_item_name as product_name,
-  brand as brand_name
+    cast(stock_item_id as int) AS product_id
+    , cast(stock_item_name as string) AS product_name
+    , cast(brand as string) AS brand_name
 FROM `duckdata-320210.wide_world_importers.warehouse__stock_items`
