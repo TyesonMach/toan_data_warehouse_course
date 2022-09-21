@@ -1,12 +1,42 @@
 {#
-    add cast function to fact table while retriving data from source
+    using CTE to reduce the complication of the SQL for the fact table
 #}
 
-SELECT 
-  cast(order_line_id as int) AS sales_order_line_id
-  , cast(stock_item_id as int) AS product_id
-  , cast(quantity as numeric) as quantity
-  , cast(unit_price as numeric) as unit_price
-  , cast(quantity * unit_price as numeric) AS gross_amount
-FROM `duckdata-320210.wide_world_importers.sales__order_lines`
+with fact_sales_order_line__source as(
+  SELECT 
+    *
+  FROM `duckdata-320210.wide_world_importers.sales__order_lines`
+), 
+fact_sales__rename_column as(
+   SELECT 
+    order_line_id  AS sales_order_line_id
+    , stock_item_id AS product_id
+    , quantity AS quantity 
+    , unit_price AS unit_price
+    from fact_sales_order_line__source
+), 
+fact_sales__cast_type as(
+  SELECT 
+    CAST(sales_order_line_id AS INTEGER) AS sales_order_line_id
+    , CAST(product_id AS INTEGER) AS product_id
+    , CAST(quantity AS NUMERIC) AS quantity 
+    , CAST(unit_price AS NUMERIC) AS unit_price
+    from fact_sales__rename_column
+), 
+fact_sales__calculate as(
+  select
+    sales_order_line_id,
+    product_id,
+    quantity,
+    unit_price,
+    quantity * unit_price as gross_amount
+  from fact_sales__cast_type
+)
 
+select 
+  sales_order_line_id,
+  product_id,
+  quantity,
+  unit_price,
+  gross_amount
+from fact_sales__calculate
