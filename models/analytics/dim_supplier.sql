@@ -14,6 +14,12 @@ WITH dim_supplier__source AS (
     , CAST(supplier_name AS STRING) AS supplier_name
   FROM dim_supplier__source
 )
+, dim_supplier__coalesce AS (
+  SELECT 
+    supplier_id
+    , coalesce(supplier_name, 'Undefined') as supplier_name
+  FROM dim_supplier__source
+)
 
 
 SELECT 

@@ -36,12 +36,15 @@ WITH dim_product__source AS (
 
 , dim_product__convert_boolean AS (
   SELECT 
-    *
+    product_id
+    , product_name
+    , supplier_id
     , CASE
       WHEN is_chiller_stock_boolean IS TRUE THEN 'Chiller Stock'
       WHEN is_chiller_stock_boolean IS FALSE THEN 'Not Chiller Stock'
       ELSE 'Undefined' END
       AS is_chiller_stock
+    , coalesce(brand_name, 'Undefined') as brand_name
   FROM dim_product__cast_type
 )
 
@@ -51,7 +54,7 @@ SELECT
   , dim_product.brand_name
   , dim_product.is_chiller_stock
   , dim_product.supplier_id
-  , dim_supplier.supplier_name
+  , coalesce(dim_supplier.supplier_name, 'Undefined') as supplier_name
 FROM dim_product__convert_boolean AS dim_product
 LEFT JOIN {{ ref('dim_supplier') }}
   ON dim_product.supplier_id = dim_supplier.supplier_id
