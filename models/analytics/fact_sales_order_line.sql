@@ -1,5 +1,9 @@
 {#
+Ở bài trước, bạn đã setup incremental cho bảng này. Tuy nhiên, "fact_sales_order_line" được tổng hợp từ hai bảng: "sales__order_lines" và "sales__orders". Dữ liệu mới từ "sales__order_lines" sẽ được cập nhật vô bảng này. Tuy nhiên còn bảng "sales__orders" nếu được thêm mới hoặc sửa sẽ không được cập nhật (ví dụ thông tin customer_id được sửa). 
 
+Làm sao để sự thay đổi ở cả hai bảng "sales__order_lines" và "sales__orders" đều được cập nhật ở bảng này?
+
+Yêu cầu #0202: Tùy chỉnh để bảng này có thể load incrementally từ cả "sales__order_lines" và "sales__orders".
 #}
 
 
@@ -15,6 +19,7 @@ WITH fact_sales_order_line__source AS (
     , stock_item_id AS product_id
     , quantity 
     , unit_price
+    ,last_edited_when
   FROM fact_sales_order_line__source
 )
 
@@ -25,6 +30,7 @@ WITH fact_sales_order_line__source AS (
     , CAST(product_id AS INTEGER) AS product_id
     , CAST(quantity AS NUMERIC) AS quantity 
     , CAST(unit_price AS NUMERIC) AS unit_price
+    ,cast(last_edited_when as timestamp) as last_edited_when
   FROM fact_sales_order_line__rename_column
 )
 
@@ -45,6 +51,18 @@ SELECT
   , fact_line.quantity 
   , fact_line.unit_price
   , fact_line.gross_amount
+  ,fact_line.last_edited_when
 FROM fact_sales_order_line__calculate_fact AS fact_line
 LEFT JOIN {{ ref('stg_fact_sales_order') }} AS fact_header
   ON fact_line.sales_order_id = fact_header.sales_order_id
+
+{% if is_incremental() %}
+  where fact_line.last_edited_when  >= (select max(last_edited_when) from {{ this }})
+{% endif %}
+
+{{
+  config(
+    materialized = 'incremental',
+    unique_key = 'sales_order_line_id'
+  )
+}}
