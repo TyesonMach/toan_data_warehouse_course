@@ -11,6 +11,7 @@ WITH fact_sales_order__source AS (
     , salesperson_person_id
     , order_date
     , last_edited_when AS sales__orders__last_edited_when
+    , is_undersupply_backordered AS is_undersupply_backordered_boolean
   FROM fact_sales_order__source
 )
 
@@ -22,6 +23,7 @@ WITH fact_sales_order__source AS (
     , CAST(salesperson_person_id AS INTEGER) AS salesperson_person_id
     , CAST(order_date AS DATE) AS order_date
     , CAST(sales__orders__last_edited_when AS TIMESTAMP) AS sales__orders__last_edited_when
+    ,CAST(is_undersupply_backordered_boolean AS BOOLEAN) AS is_undersupply_backordered_boolean
   FROM fact_sales_order__rename_column
 )
 
@@ -33,4 +35,5 @@ SELECT
   , salesperson_person_id
   , order_date
   , sales__orders__last_edited_when
+  , is_undersupply_backordered_boolean
 FROM fact_sales_order__cast_type

@@ -24,6 +24,7 @@ WITH fact_sales_order_line__source AS (
     , quantity 
     , unit_price
     , last_edited_when
+    , package_type_id
   FROM fact_sales_order_line__source
 )
 
@@ -35,6 +36,7 @@ WITH fact_sales_order_line__source AS (
     , CAST(quantity AS NUMERIC) AS quantity 
     , CAST(unit_price AS NUMERIC) AS unit_price
     , CAST(last_edited_when AS TIMESTAMP) AS last_edited_when
+    ,cast(package_type_id as int) as package_type_id
   FROM fact_sales_order_line__rename_column
 )
 
@@ -51,9 +53,10 @@ SELECT
   , COALESCE(fact_header.customer_id, 0) AS customer_id
   , COALESCE(fact_header.picked_by_person_id, 0) AS picked_by_person_id
   , COALESCE(fact_header.salesperson_person_id, 0) AS salesperson_person_id
+  , FARM_FINGERPRINT(CONCAT(fact_header.is_undersupply_backordered_boolean, fact_line.package_type_id)) as sales_order_line_indicator_key
   , fact_line.product_id
   , fact_header.order_date
-  , fact_line.quantity 
+  , fact_line.quantity
   , fact_line.unit_price
   , fact_line.gross_amount
   , fact_line.last_edited_when
