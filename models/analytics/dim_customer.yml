@@ -19,6 +19,11 @@ models:
       - name: customer_category_id
         tests:
           - not_null
+          - relationships:
+              to : ref('stg_dim_customer_category')
+              field: customer_category_id
+              config:
+                where: customer_category_id <> 0
 
       - name: customer_category_name
         tests:

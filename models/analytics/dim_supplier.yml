@@ -7,6 +7,9 @@ models:
         tests:
           - unique
           - not_null
+          - relationships:
+              to : ref('dim_person')
+              field: person_id
 
       - name: supplier_name
         tests:

@@ -23,6 +23,7 @@ models:
       - name: supplier_id
         tests:
           - not_null
+          
 
       - name: supplier_name
         tests:
